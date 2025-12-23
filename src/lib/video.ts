@@ -23,9 +23,21 @@ export async function renderVideo<VOpts extends VideoOptions>(
         
         renderProcess.stderr.on("data", (data: Buffer) => {
             socket.emit("render info", data.toString());
+            console.error("Python Error:", data.toString());
         });
 
-        renderProcess.on("close", res);
+        renderProcess.on("error", (err) => {
+            console.error("Failed to start subprocess:", err);
+            socket.emit("render info", `Failed to start subprocess: ${err.message}`);
+            res(undefined);
+        });
+
+        renderProcess.on("close", (code) => {
+            if (code !== 0) {
+                 socket.emit("render info", `Process exited with code ${code}`);
+            }
+            res(code);
+        });
     });
     
 }

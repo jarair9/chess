@@ -49,6 +49,54 @@ const logsObserver = new MutationObserver(() => {
     logsContainer.scrollTop = logsContainer.scrollHeight;
 });
 
+
+// Load players on startup
+const socket = io({ reconnection: false });
+
+socket.on("connect", () => {
+    socket.emit("list players");
+});
+socket.on("players list", (players) => {
+    const select = $(".player-select");
+    players.forEach(player => {
+        select.append(new Option(player, player));
+    });
+    // socket.disconnect(); // Keep connection open for gallery updates
+});
+
+$(".get-random-game").on("click", () => {
+    const player = $(".player-select").val();
+    if (!player) {
+        showToast("Please select a player first.", "error");
+        return;
+    }
+
+    const btn = $(".get-random-game");
+    const originalText = btn.text();
+    btn.prop("disabled", true).text("Loading...");
+
+    const socket = io({ reconnection: false });
+
+    socket.on("connect", () => {
+        socket.emit("get random game", player);
+    });
+
+    socket.on("random game pgn", (pgn) => {
+        $(".short-extra-data").val(pgn);
+        btn.prop("disabled", false).text(originalText);
+        showToast("Random game loaded!", "success");
+        socket.disconnect();
+    });
+
+    socket.on("render info", (msg) => {
+        if (msg.startsWith("Library Error")) {
+            showToast(msg, "error");
+            btn.prop("disabled", false).text(originalText);
+            socket.disconnect();
+        }
+    });
+});
+
 logsObserver.observe($(".production-logs").get(0), {
     childList: true
 });

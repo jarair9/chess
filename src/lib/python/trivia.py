@@ -5,6 +5,10 @@ from json import loads
 import moviepy.editor as editor
 from moviepy.video.fx.resize import resize
 from moviepy.audio.fx.volumex import volumex
+from moviepy.config import change_settings
+import os
+
+change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
 
 
 clip_durations = {
@@ -149,6 +153,10 @@ def produce_short(
         threads=4,
         temp_audiofile="out/TEMP_trivia.mp4"
     )
+
+    result.close()
+    music.close()
+    background.close()
 
 if __name__ == "__main__":
     args = loads(argv[1])

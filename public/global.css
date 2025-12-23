@@ -1,56 +1,375 @@
 :root {
-    --primary-color: #6767ff;
-    --primary-color-darker: #6161ee;
-    --secondary-color: #e9e9e9;
-    --secondary-color-darker: #e4e4e4;
-    --secondary-color-darker2: #d8d8d8;
+    --bg-color: #121212;
+    --surface-color: #1e1e1e;
+    --text-color: #e0e0e0;
+    --primary-color: #bb86fc;
+    --primary-variant: #3700b3;
+    --secondary-color: #03dac6;
+    --error-color: #cf6679;
+    --border-radius: 8px;
 }
 
 body {
-    background-color: var(--secondary-color);
-    font-family: system-ui, sans-serif;
-}
-
-h1 {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Outfit', system-ui, sans-serif;
     margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
-textarea {
-    font-family: system-ui, sans-serif;
+.main-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+h1,
+h2,
+h3 {
+    text-align: center;
+    margin: 0;
+    color: var(--primary-color);
 }
 
 .column {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    gap: 15px;
 }
 
 .field {
     outline: none;
-    border-radius: 10px;
-    background-color: var(--secondary-color-darker);
+    border: 1px solid #333;
+    border-radius: var(--border-radius);
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    padding: 10px;
+    font-size: 1rem;
 }
 
 .field:focus {
-    outline: 2px solid var(--primary-color);
-    outline-offset: -1px;
+    border-color: var(--primary-color);
 }
 
 .btn {
-    padding: 10px;
-
-    background-color: var(--primary-color);
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-variant));
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     cursor: pointer;
-
-    color: white;
+    color: #000;
     font-weight: bold;
-
-    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    transition: transform 0.2s, opacity 0.2s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 .btn:hover {
-    background-color: var(--primary-color-darker);
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Specific Section Styles */
+.short-type-option-container,
+.short-extra-data-container,
+.video-gallery-container,
+.short-configuration {
+    background-color: var(--surface-color);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.production-logs {
+    background-color: #000;
+    color: #0f0;
+    font-family: monospace;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    height: 150px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    display: none;
+    /* Hidden by default */
+    flex-direction: column;
+}
+
+.short-configuration {
+    display: none;
+    /* Hidden by default */
+    align-items: center;
+}
+
+.short-preview {
+    width: 100%;
+    max-height: 500px;
+    border-radius: var(--border-radius);
+    margin-top: 10px;
+}
+
+/* Video Gallery */
+.video-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.video-item {
+    background-color: var(--bg-color);
+    border: 1px solid #333;
+    border-radius: var(--border-radius);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.video-name {
+    font-size: 0.9rem;
+    word-break: break-all;
+    color: #aaa;
+}
+
+.video-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.video-actions .btn {
+    flex: 1;
+    font-size: 0.8rem;
+    padding: 8px;
+    background: var(--surface-color);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.video-actions .btn:hover {
+    background: var(--primary-color);
+    color: #000;
+}
+
+/* Fix Select Option Visibility */
+select option {
+    background-color: var(--surface-color);
+    color: var(--text-color);
+}
+
+/* Feed Page Styles */
+.feed-container {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 50px;
+}
+
+.feed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-color);
+    z-index: 100;
+    padding: 10px 0;
+    border-bottom: 1px solid #333;
+}
+
+.back-btn {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.video-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.video-card {
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.video-card video {
+    width: 100%;
+    display: block;
+    max-height: 80vh;
+    /* Don't make them too tall */
+    background-color: #000;
+}
+
+.video-info {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.video-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow: hidden;
+}
+
+.video-title {
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+.video-date {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.video-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.delete-btn {
+    background: var(--error-color);
+    /* Need to define or use red */
+    color: white;
+    padding: 10px;
+}
+
+.download-btn {
+    padding: 10px;
+}
+
+.no-videos,
+.loading-spinner {
+    text-align: center;
+    margin-top: 50px;
+    color: #666;
+}
+
+/* Mobile Responsiveness Improvements */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .main-container,
+    .feed-container {
+        gap: 20px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .btn {
+        padding: 15px;
+        /* Larger touch target */
+        font-size: 1.1rem;
+    }
+
+    .short-type-option-container,
+    .short-extra-data-container,
+    .video-gallery-container,
+    .short-configuration {
+        padding: 15px;
+        /* Use less space for padding on mobile */
+    }
+
+    .video-list {
+        grid-template-columns: 1fr;
+        /* Force single column on mobile */
+    }
+
+    /* Ensure specific inputs don't overflow */
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+        /* Vital for padding not to cause overflow */
+    }
+
+    .local-pgn-container {
+        flex-direction: column;
+        align-items: stretch !important;
+        /* Override inline style */
+    }
+
+    .local-pgn-container select,
+    .local-pgn-container button {
+        width: 100%;
+    }
+
+    /* Fix for "very big" options - ensure readable but contained */
+    .short-type-option {
+        width: 100%;
+        font-size: 1rem;
+        /* Standard readable size */
+        padding: 12px;
+        background-color: var(--surface-color);
+        /* Ensure consistent background */
+    }
+
+    /* Ensure dropdown options don't look weird if styles are applied */
+    option {
+        font-size: 1rem;
+    }
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.toast {
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    padding: 12px 24px;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.success {
+    border-left: 4px solid var(--secondary-color);
+}
+
+.toast.error {
+    border-left: 4px solid var(--error-color);
 }

@@ -1,7 +1,9 @@
-node_modules
-out
-build
-assets
-src/lib/python/__pycache__
-src/lib/python/*/**/__pycache__
+node_modules/
+out/
+build/
+assets/
+src/lib/python/__pycache__/
+src/lib/python/*/**/__pycache__/
 .env
+*.exe
+*.log

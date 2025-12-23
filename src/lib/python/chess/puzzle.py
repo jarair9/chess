@@ -14,6 +14,9 @@ from moviepy.video.fx.resize import resize
 from moviepy.audio.fx.volumex import volumex
 
 from board import *
+import os
+from moviepy.config import change_settings
+change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
 
 clip_durations = {
     "puzzle": 10,
@@ -88,7 +91,31 @@ def produce_short(
             
             break
     else:
-        raise ValueError("brilliant move not found in provided PGN.")
+        # Fallback: If no brilliant move is found (common in raw PGNs),
+        # pick a random move from the middle of the game to simulate a puzzle.
+        print("Brilliant move (!!) not found. Using random fallback move.")
+        from random import randint
+        
+        # Ensure game is long enough
+        if len(game_moves) > 10:
+            # Pick from middle 50%
+            start = len(game_moves) // 4
+            end = len(game_moves) * 3 // 4
+            fallback_index = randint(start, end)
+            
+            # Slice the game to focus on this move
+            # We need [move_before, move_brilliant, ...]
+            # So we slice from fallback_index - 1
+            game_moves = game_moves[fallback_index - 1:]
+            
+            # Determine perspective (who made the move)
+            # game_moves[1] is the brilliant move. 
+            # node.turn() is the side to move *after* the move (the opponent).
+            # If White moved, turn is Black (False) -> flipped=False (White Persp)
+            # If Black moved, turn is White (True) -> flipped=True (Black Persp)
+            flipped = game_moves[1].turn()
+        else:
+            raise ValueError("brilliant move not found and game too short for fallback.")
     
     board_clips = [
         draw_board(
@@ -122,6 +149,11 @@ def produce_short(
 
     brilliancy_board = game_moves[1].board()
 
+    # Setup engine early
+    sf_engine = Stockfish("./src/resources/bin/stockfish.exe")
+    sf_engine.set_depth(18)
+    sf_engine.set_fen_position(brilliancy_board.fen())
+
     # Find legal moves that capture the sacrificed piece
     capturing_moves: list[Move] = []
 
@@ -130,45 +162,60 @@ def produce_short(
         if legal_move.to_square == sacrifice_square:
             capturing_moves.append(legal_move)
 
-    # If there are no pieces that can take the sacrificed piece
-    if len(capturing_moves) == 0:
-        raise ValueError("the sacrificed piece is not the one that just moved.")
+    # Determine the response move (either capture or best engine move)
+    response_move = None
 
-    # Find the move with the lowest value capturer
-    lowest_value_capture = min(
-        capturing_moves,
-        key=lambda atk : piece_values[
-            brilliancy_board.piece_at(atk.from_square).piece_type
-        ]
-    )
-    if not lowest_value_capture.promotion is None:
-        lowest_value_capture.promotion = QUEEN
-
-    # Add the board clips for this capture and play on the board
-    line_clips_start_time = sum([
-        clip_durations["puzzle"],
-        clip_durations["move"],
-        clip_durations["solution"]
-    ])
-
-    line_board_clips.append(
-        draw_move_with_preview(
-            fen=brilliancy_board.fen(),
-            flipped=flipped,
-            highlighted_move=lowest_value_capture.uci(),
-            audio=True,
-            move_duration=clip_durations["move"],
-            preview_duration=clip_durations["line_move"]
+    if len(capturing_moves) > 0:
+        # Find the move with the lowest value capturer
+        response_move = min(
+            capturing_moves,
+            key=lambda atk : piece_values[
+                brilliancy_board.piece_at(atk.from_square).piece_type
+            ]
         )
-        .set_start(line_clips_start_time)
-    )
+    else:
+        # Fallback: Not a sacrifice or capture not possible. Use engine best move.
+        best_move_uci = sf_engine.get_best_move()
+        if best_move_uci:
+            response_move = Move.from_uci(best_move_uci)
+        else:
+             # Just in case engine yields nothing (mate?), try random legal
+             if list(brilliancy_board.legal_moves):
+                 from random import choice
+                 response_move = choice(list(brilliancy_board.legal_moves))
+    
+    if response_move is None:
+         # Game over?
+         print("No legal moves for opponent.")
+         # Should handle gracefully, maybe just end short here?
+         # For now, let it crash if this impossible state is reached
+         pass
+    else:
+        if not response_move.promotion is None:
+            response_move.promotion = QUEEN
 
-    brilliancy_board.push(lowest_value_capture)
+        # Add the board clips for this capture and play on the board
+        line_clips_start_time = sum([
+            clip_durations["puzzle"],
+            clip_durations["move"],
+            clip_durations["solution"]
+        ])
 
-    # Go through the next couple top engine moves and add their board clips
-    sf_engine = Stockfish("./src/resources/bin/stockfish.exe")
-    sf_engine.set_depth(18)
-    sf_engine.set_fen_position(brilliancy_board.fen())
+        line_board_clips.append(
+            draw_move_with_preview(
+                fen=brilliancy_board.fen(),
+                flipped=flipped,
+                highlighted_move=response_move.uci(),
+                audio=True,
+                move_duration=clip_durations["move"],
+                preview_duration=clip_durations["line_move"]
+            )
+            .set_start(line_clips_start_time)
+        )
+
+        brilliancy_board.push(response_move)
+        # Update engine position for the loop below
+        sf_engine.set_fen_position(brilliancy_board.fen())
 
     for i in range(7):
         top_engine_move = sf_engine.get_best_move()
@@ -268,6 +315,11 @@ def produce_short(
         threads=4,
         temp_audiofile="out/TEMP_chess_puzzle.mp4"
     )
+
+    result.close()
+    # Explicitly closing composite clips helps release handles
+    for clip in result.clips:
+        clip.close()
 
 
 if __name__ == "__main__":

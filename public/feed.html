@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>JA Studio - Feed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/global.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="feed-container">
+        <div class="feed-header">
+            <a href="/" class="btn back-btn">← Back to Studio</a>
+            <h1>Video Feed</h1>
+        </div>
+
+        <div class="video-feed" id="videoFeed">
+            <!-- Videos will be injected here -->
+            <div class="loading-spinner">Loading videos...</div>
+        </div>
+    </div>
+
+    <script src="/toast.js"></script>
+    <script src="/feed.js"></script>
+</body>
+
+</html>
