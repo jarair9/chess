@@ -8,9 +8,8 @@ from moviepy.audio.fx.volumex import volumex
 from moviepy.config import change_settings
 import os
 
-import platform
-if platform.system() == "Windows":
-    change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
+change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
+
 
 
 clip_durations = {

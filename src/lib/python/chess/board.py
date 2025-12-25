@@ -10,9 +10,8 @@ import moviepy.editor as editor
 from moviepy.video.fx.resize import resize
 from moviepy.video.compositing.transitions import crossfadeout
 from moviepy.config import change_settings
-import platform
-if platform.system() == "Windows":
-    change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
+change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
+
 
 RESOURCES = "./src/resources/chess"
 PIECES = {
