@@ -15,8 +15,20 @@ from moviepy.audio.fx.volumex import volumex
 
 from .board import *
 import os
+import platform
+import shutil
 from moviepy.config import change_settings
-change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
+
+# Platform-specific configuration
+if platform.system() == "Windows":
+    # On Windows, point to the local exe if available
+    magick_path = os.path.abspath("magick.exe")
+    if os.path.exists(magick_path):
+        change_settings({"IMAGEMAGICK_BINARY": magick_path})
+else:
+    # On Linux/Cloud, let MoviePy find it or assume system path
+    # If explicit path is needed: change_settings({"IMAGEMAGICK_BINARY": "/usr/bin/convert"})
+    pass
 
 clip_durations = {
     "puzzle": 10,
@@ -151,7 +163,16 @@ def produce_short(
     brilliancy_board = game_moves[1].board()
 
     # Setup engine early
-    sf_engine = Stockfish("./src/resources/bin/stockfish.exe")
+    if platform.system() == "Windows":
+        sf_path = "./src/resources/bin/stockfish.exe"
+    else:
+        # Check if stockfish is in path (common in Linux packages)
+        sf_path = shutil.which("stockfish")
+        if not sf_path:
+             # Fallback to common linux location if not in PATH
+            sf_path = "/usr/games/stockfish"
+
+    sf_engine = Stockfish(sf_path)
     sf_engine.set_depth(18)
     sf_engine.set_fen_position(brilliancy_board.fen())
 
