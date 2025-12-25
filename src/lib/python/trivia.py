@@ -32,7 +32,8 @@ def produce_short(
     background: str,
     music: str,
     font: str,
-    output: str
+    output: str,
+    logger=None
 ):
     question_count = len(questions)
 
@@ -45,6 +46,12 @@ def produce_short(
             .set_position(("center", "center"))
         ),
         height=1920
+    )
+
+    dimmer = (
+        editor.ColorClip(size=(1080, 1920), color=(0,0,0))
+        .set_opacity(0.4)
+        .set_duration(full_question_duration * question_count)
     )
 
     music_duration = editor.AudioFileClip(music).duration
@@ -69,12 +76,12 @@ def produce_short(
                 fontsize=90, 
                 color="white", 
                 stroke_color="black", 
-                stroke_width=2,
+                stroke_width=4,
                 method="caption",
                 size=(1080, None),
                 font=font
             )
-            .set_position(("center", 0.03), relative=True)
+            .set_position(("center", 0.15), relative=True)
             .set_start(question_index * full_question_duration)
             .set_duration(clip_durations["question"])
         )
@@ -87,12 +94,12 @@ def produce_short(
                     fontsize=90, 
                     color="white", 
                     stroke_color="black", 
-                    stroke_width=2,
+                    stroke_width=4,
                     method="caption",
                     size=(1080, None),
                     font=font
                 )
-                .set_position(("center", 0.35 + (i / 7)), relative=True)
+                .set_position(("center", 0.4 + (i / 7)), relative=True)
                 .set_start(question_index * full_question_duration)
                 .set_duration(clip_durations["question"])
             ) for i in range(len(question["answers"]))
@@ -106,14 +113,14 @@ def produce_short(
                     fontsize=120, 
                     color="white", 
                     stroke_color="black", 
-                    stroke_width=2,
+                    stroke_width=4,
                     method="caption",
                     size=(1080, None),
                     font=font
                 )
                 .set_start(question_index * full_question_duration + i)
                 .set_duration(1)
-                .set_position(("center", 0.87), relative=True)
+                .set_position(("center", 0.8), relative=True)
             ) for i in range(clip_durations["question"])
         ]
         clips += countdown_texts
@@ -122,9 +129,9 @@ def produce_short(
             editor.TextClip(
                 question["answers"][question["correct"]], 
                 fontsize=120, 
-                color="#00ff00", 
+                color="#4ADE80", 
                 stroke_color="black", 
-                stroke_width=2,
+                stroke_width=4,
                 method="caption",
                 size=(1080, None),
                 font=font
@@ -139,6 +146,7 @@ def produce_short(
         editor.CompositeVideoClip(
             [
                 background,
+                dimmer,
                 *clips
             ], 
             size=(1080, 1920)
@@ -151,7 +159,8 @@ def produce_short(
         fps=24, 
         audio_codec="aac",
         threads=4,
-        temp_audiofile="out/TEMP_trivia.mp4"
+        temp_audiofile="out/TEMP_trivia.mp4",
+        logger=logger
     )
 
     result.close()

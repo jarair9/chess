@@ -1,3 +1,5 @@
 moviepy
 chess
 stockfish
+streamlit
+watchdog

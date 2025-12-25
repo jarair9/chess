@@ -13,7 +13,7 @@ import moviepy.editor as editor
 from moviepy.video.fx.resize import resize
 from moviepy.audio.fx.volumex import volumex
 
-from board import *
+from .board import *
 import os
 from moviepy.config import change_settings
 change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
@@ -40,7 +40,8 @@ def produce_short(
     background: str,
     font: str,
     music: str,
-    music_drop_time: float
+    music_drop_time: float,
+    logger=None
 ):
     # Puzzle question text
     question_text = (
@@ -313,7 +314,8 @@ def produce_short(
         fps=24,
         audio_codec="aac",
         threads=4,
-        temp_audiofile="out/TEMP_chess_puzzle.mp4"
+        temp_audiofile="out/TEMP_chess_puzzle.mp4",
+        logger=logger
     )
 
     result.close()
