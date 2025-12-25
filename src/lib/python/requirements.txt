@@ -3,3 +3,4 @@ chess
 stockfish
 streamlit
 watchdog
+proglog

@@ -173,7 +173,9 @@ with tab_generate:
 
     if "last_video" in st.session_state and os.path.exists(st.session_state.last_video):
         st.subheader("Preview")
-        st.video(st.session_state.last_video)
+        col_prev, _ = st.columns([0.4, 0.6])
+        with col_prev:
+            st.video(st.session_state.last_video)
 
 
 # --- Feed Tab ---
@@ -205,7 +207,9 @@ with tab_feed:
 
         file_path = os.path.join("out", video['filename'])
         if os.path.exists(file_path):
-            st.video(file_path)
+            col_vid, _ = st.columns([0.4, 0.6])
+            with col_vid:
+                st.video(file_path)
         else:
             st.error("File not found on disk.")
         
@@ -214,4 +218,45 @@ with tab_feed:
 # --- Library Tab ---
 with tab_library:
     st.header("PGN Library")
-    st.info("PGN Management coming soon. Access 'games/' folder directly.")
+    
+    # 1. Upload
+    uploaded_file = st.file_uploader("Upload PGN", type=["pgn"])
+    if uploaded_file is not None:
+        save_path = os.path.join("games", uploaded_file.name)
+        with open(save_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        st.success(f"Uploaded {uploaded_file.name}")
+        st.rerun()
+        
+    st.divider()
+    
+    # 2. List Files
+    if not os.path.exists("games"):
+        os.makedirs("games")
+        
+    pgn_files = [f for f in os.listdir("games") if f.endswith(".pgn")]
+    if not pgn_files:
+        st.info("No PGN files found in 'games/' directory.")
+    else:
+        for pgn_file in pgn_files:
+            col_name, col_action = st.columns([0.8, 0.2])
+            
+            with col_name:
+                file_path = os.path.join("games", pgn_file)
+                size_kb = os.path.getsize(file_path) / 1024
+                st.write(f"📄 **{pgn_file}** ({size_kb:.1f} KB)")
+                
+                with st.expander("Preview"):
+                    try:
+                        with open(file_path, "r", encoding="utf-8") as f:
+                            content = f.read(1000)
+                            st.code(content + ("..." if len(content) == 1000 else ""), language="text")
+                    except Exception as e:
+                        st.error(f"Error reading file: {e}")
+
+            with col_action:
+                if st.button("🗑️", key=f"del_pgn_{pgn_file}"):
+                    os.remove(os.path.join("games", pgn_file))
+                    st.rerun()
+            
+            st.divider()

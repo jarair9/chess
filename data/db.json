@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "1d6735de-6c6f-495d-a13c-27d7aba132be",
+    "filename": "26f4b2e4-f4f8-431a-8a8b-e009b7c41fba.mp4",
+    "type": "legacy",
+    "date": "2025-12-25T10:30:18.627807",
+    "title": "Legacy Video"
+  },
+  {
+    "id": "4e73116c-8264-45b8-80bf-07569a14aec3",
+    "filename": "3bcf735b-5578-47cc-9849-228c8918141a.mp4",
+    "type": "legacy",
+    "date": "2025-12-25T10:30:18.627807",
+    "title": "Legacy Video"
+  },
+  {
+    "id": "a3e917eb-c2ed-4173-b803-8438e0fb15fd",
+    "filename": "640f7efb-9c0c-4d6b-ae57-237f9d75b163.mp4",
+    "type": "chess/puzzle",
+    "date": "2025-12-25T10:45:16.294027",
+    "title": "Chess Puzzle Short"
+  }
+]
