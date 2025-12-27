@@ -5,10 +5,7 @@ from json import loads
 import moviepy.editor as editor
 from moviepy.video.fx.resize import resize
 from moviepy.audio.fx.volumex import volumex
-from moviepy.config import change_settings
-import os
-
-change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
+from lib.python.text_generator import create_text_clip
 
 
 
@@ -72,7 +69,7 @@ def produce_short(
 
     for question_index, question in enumerate(questions):
         question_text = (
-            editor.TextClip(
+            create_text_clip(
                 question["title"],
                 fontsize=90, 
                 color="white", 
@@ -80,7 +77,7 @@ def produce_short(
                 stroke_width=4,
                 method="caption",
                 size=(1080, None),
-                font=font
+                font_path=font
             )
             .set_position(("center", 0.15), relative=True)
             .set_start(question_index * full_question_duration)
@@ -90,7 +87,7 @@ def produce_short(
 
         answer_texts = [
             (
-                editor.TextClip(
+                create_text_clip(
                     f"{list('ABCD')[i]} - {question['answers'][i]}", 
                     fontsize=90, 
                     color="white", 
@@ -98,7 +95,7 @@ def produce_short(
                     stroke_width=4,
                     method="caption",
                     size=(1080, None),
-                    font=font
+                    font_path=font
                 )
                 .set_position(("center", 0.4 + (i / 7)), relative=True)
                 .set_start(question_index * full_question_duration)
@@ -109,7 +106,7 @@ def produce_short(
 
         countdown_texts = [
             (
-                editor.TextClip(
+                create_text_clip(
                     str(clip_durations["question"] - i), 
                     fontsize=120, 
                     color="white", 
@@ -117,17 +114,17 @@ def produce_short(
                     stroke_width=4,
                     method="caption",
                     size=(1080, None),
-                    font=font
+                    font_path=font
                 )
                 .set_start(question_index * full_question_duration + i)
                 .set_duration(1)
-                .set_position(("center", 0.8), relative=True)
+                .set_position(("center", 0.9), relative=True)
             ) for i in range(clip_durations["question"])
         ]
         clips += countdown_texts
 
         correct_answer_text = (
-            editor.TextClip(
+            create_text_clip(
                 question["answers"][question["correct"]], 
                 fontsize=120, 
                 color="#4ADE80", 
@@ -135,7 +132,7 @@ def produce_short(
                 stroke_width=4,
                 method="caption",
                 size=(1080, None),
-                font=font
+                font_path=font
             )
             .set_start(question_index * full_question_duration + clip_durations["question"])
             .set_duration(clip_durations["answer"])

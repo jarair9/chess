@@ -19,5 +19,26 @@
     "type": "chess/puzzle",
     "date": "2025-12-25T10:45:16.294027",
     "title": "Chess Puzzle Short"
+  },
+  {
+    "id": "473d4806-f162-44d2-9276-efe8c0decbc1",
+    "filename": "2d03e48f-f739-4cee-a74e-23c39c6f2fc0.mp4",
+    "type": "legacy",
+    "date": "2025-12-25T12:02:21.028615",
+    "title": "Legacy Video"
+  },
+  {
+    "id": "d391eb36-c286-432e-bf23-15885fb057d1",
+    "filename": "562e1bc6-2aa9-4bdb-bb44-5737d7c93870.mp4",
+    "type": "legacy",
+    "date": "2025-12-27T09:17:17.026022",
+    "title": "Legacy Video"
+  },
+  {
+    "id": "4b7d7b02-e31b-4ef9-b3ef-b41e8b528999",
+    "filename": "5ba1db05-6ca0-4207-bea9-ded1b6b39548.mp4",
+    "type": "trivia",
+    "date": "2025-12-27T09:27:33.718969",
+    "title": "Trivia Short"
   }
 ]

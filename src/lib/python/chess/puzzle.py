@@ -16,9 +16,7 @@ from moviepy.audio.fx.volumex import volumex
 from .board import *
 import os
 import shutil
-from moviepy.config import change_settings
-
-change_settings({"IMAGEMAGICK_BINARY": os.path.abspath("magick.exe")})
+from lib.python.text_generator import create_text_clip
 
 
 clip_durations = {
@@ -48,9 +46,9 @@ def produce_short(
 ):
     # Puzzle question text
     question_text = (
-        editor.TextClip(
+        create_text_clip(
             "Can you find the brilliant move?",
-            font=font,
+            font_path=font,
             fontsize=120,
             color="white",
             stroke_color="black",
@@ -65,9 +63,9 @@ def produce_short(
     # Puzzle countdown text clips
     countdown_texts = [
         (
-            editor.TextClip(
+            create_text_clip(
                 str(clip_durations["puzzle"] - i),
-                font=font,
+                font_path=font,
                 fontsize=120,
                 color="white",
                 stroke_color="black",
@@ -274,9 +272,9 @@ def produce_short(
     solution_san = game_moves[1].san()
 
     solution_text = (
-        editor.TextClip(
+        create_text_clip(
             solution_san + "!!",
-            font=font,
+            font_path=font,
             fontsize=160,
             color="#00ff00",
             stroke_color="black",
